@@ -24,7 +24,7 @@ Automation Tool ( Under Development )
     * Remove Directory Command :
       * RAML Syntax :
         *  _rmdir "directory_path"_
-    * Compare 2 Directories Command :
+    * Compare 2 Directories Command _(Unstable, IndexError noticed in some directories)_ :
       * RAML Syntax _(Basic Comparison)_ :
           *  _cmp "directory_path_1" "directory_path_2"_
       * RAML Syntax _(Comparison with detailed __log file__)_ :
