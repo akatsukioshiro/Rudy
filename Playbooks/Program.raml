@@ -4,17 +4,21 @@
 !del "D:\STORE\0-Admin\Desktop\Rudy\b\a.txt"
 !rmdir "D:\STORE\0-Admin\Desktop\Rudy\b"
 
--process
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!-process
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
 !rmdir "D:\STORE\0-Admin\Desktop\Rudy\b"
 
--process1
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!-process1
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
 
--process2
-:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
+!-process2
+!:copy "D:\STORE\0-Admin\Desktop\Rudy\a" "D:\STORE\0-Admin\Desktop\Rudy\b" "a.txt"
 
--proc
+!-proc
+
+-comparetag
+:cmp "D:\STORE\0-Admin\Desktop\Rudy_backup" "D:\STORE\0-Admin\Desktop\Rudy"
+:cmp "D:\STORE\0-Admin\Desktop\Rudy_backup" "D:\STORE\0-Admin\Desktop\Rudy" "D:\STORE\0-Admin\Desktop\log.txt"
