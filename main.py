@@ -12,15 +12,10 @@ tag_state="0";
 current_tag="";
 
 #Global Variables for Folder Compare
-source_list=[]
-target_list=[]
-final_list=[]
-folder_count=0
-file_count=0
-s_file_count=0
-s_folder_count=0
-t_file_count=0
-t_folder_count=0
+source_a_f=[]
+source_a_d=[]
+target_a_f=[]
+target_a_d=[]
 cmp_state="0"
 
 #All Function Definitions
@@ -129,156 +124,55 @@ def f_rmdir(content):
 	elif(len(content)>3):
 		print("LOG : Too many Arguments")
 
-#6. Directory/Folder Comparison Utility child part
-def source_target_cmp(source,target,state):
-	global source_list, target_list
-	s_t_match="0"
-	for root_1, dirs_1, files_1 in os.walk(source):
-		for file_s in files_1:
-			#print(file_1)
-			for root_2, dirs_2, files_2 in os.walk(target):
-				for file_t in files_2:
-					if(file_s==file_t):
-						#print(file_s)
-						s_t_match="1"
-						break
-				if(s_t_match=="0"):
-					#print("$$"+file_s)
-					if(state=="0"):
-						source_list.append("$$"+file_s)
-					elif(state=="1"):
-						target_list.append("$$"+file_s)
-					#s_t_match="0"
-					break
-				elif(s_t_match=="1"):
-					s_t_match="0"
-					break
-		for dir_s in dirs_1:
-			#print(dir)
-			for root_2, dirs_2, files_2 in os.walk(target):
-				for dir_t in dirs_2:
-					if(dir_s==dir_t):
-						#print(dir_s)
-						s_t_match="1"
-						break
-				if(s_t_match=="0"):
-					#print(">>"+dir_s)
-					if(state=="0"):
-						source_list.append(">>"+dir_s)
-					elif(state=="1"):
-						target_list.append(">>"+dir_s)
-					#s_t_match="0"
-					break
-				elif(s_t_match=="1"):
-					s_t_match="0"
-					break
+#6. Directory/Folder Comparison Utility Source and Target
+def source(s):
+	global source_a_f, source_a_d, target_a_f, target_a_d
+	for root, d_names, f_names in os.walk(s):
+		for f_name in f_names:
+			source_a_f.append(f_name)
+		for d_name in d_names:
+			source_a_d.append(d_name)
 
+def target(t):
+	global source_a_f, source_a_d, target_a_f, target_a_d
+	for root, d_names, f_names in os.walk(t):
+		for f_name in f_names:
+			target_a_f.append(f_name)
+		for d_name in d_names:
+			target_a_d.append(d_name)
+			
 #7. Directory/Folder Comparison Utility Main Unit
-def directory_content_comparison(s,t,l):			
-	global cmp_state, source_list, target_list, final_list, folder_count, file_count, s_file_count, s_folder_count, t_file_count, t_folder_count
-	source=s
-	target=t
-	try:
-		if(l!=""):
-			f=open(l,"w+")
-			f.close()
-	except Exception:
-		pass
-
-	source_target_cmp(source,target,"0")
-	#print("========================================")
-	source_target_cmp(target,source,"1")
-	#print("****************************************")
-
-	for pos_x in range(len(source_list)):
-		for pos_y in range(len(target_list)):
-			if(source_list[pos_x]==target_list[pos_y]):
-				source_list.pop(pos_x)
-				target_list.pop(pos_y)
-				break
-	try:
-		if(l!=""):
-			f=open(l,"a+")
-			f.write("1. Path : "+source+"\n\n")
-			f.close()
-	except Exception:
-		pass
+def compare_s_t(s,t,l):
+	global cmp_state, source_a_f, source_a_d, target_a_f, target_a_d
+	source(s)
+	target(t)
+	#if(source_a_f==target_a_f and source_a_d==target_a_d):
+	#	print("True")
+	#if(set(source_a_f)==set(target_a_f) and set(source_a_d)==set(target_a_d)):
+	#	print("True")
+	statement_1="Total "+str(len(set(source_a_d).difference(target_a_d))+len(set(target_a_d).difference(source_a_d)))+" folders and "+str(len(set(source_a_f).difference(target_a_f))+len(set(target_a_f).difference(source_a_f)))+" files are unique."
+	statement_2=str(len(set(source_a_d).difference(target_a_d)))+" folders and "+str(len(set(source_a_f).difference(target_a_f)))+" files from path : "+s
+	statement_3=str(len(set(target_a_d).difference(source_a_d)))+" folders and "+str(len(set(target_a_f).difference(source_a_f)))+" files from path : "+t
+	if(l!=""):
+		f=open(l,"w+")
+		f.close()
+		f=open(l,"a+")
+		f.write(statement_1+"\n"+statement_2+"\n"+statement_3+"\n\n1. Path : "+s+"\n\n")
+		for udi_p1 in set(source_a_d).difference(target_a_d):
+			f.write("Directory: "+udi_p1+"\n")
+		for ufi_p1 in set(source_a_f).difference(target_a_f):
+			f.write("File: "+ufi_p1+"\n")
+		f.write("\n\n2. Path : "+t+"\n\n")
+		for udi_p2 in set(target_a_d).difference(source_a_d):
+			f.write("Directory: "+udi_p2+"\n")
+		for ufi_p2 in set(target_a_f).difference(source_a_f):
+			f.write("File: "+ufi_p2+"\n")
+		f.close()
 		
-	for s_unit in source_list:
-		final_list.append(s_unit)
-		try:
-			if(l!=""):
-				f=open(l,"a+")
-				if(list(s_unit)[0]=="$" and list(s_unit)[1]=="$"):
-					f.write("File: "+s_unit.replace('$', '', 2)+"\n")
-				elif(list(s_unit)[0]==">" and list(s_unit)[1]==">"):
-					f.write("Directory: "+s_unit.replace('>', '', 2)+"\n")
-				f.close()
-		except Exception:
-			pass
-		if(list(s_unit)[0]=="$" and list(s_unit)[1]=="$"):
-			s_file_count=s_file_count+1;
-		elif(list(s_unit)[0]==">" and list(s_unit)[1]==">"):
-			s_folder_count=s_folder_count+1;
-
-	try:
-		if(l!=""):
-			f=open(l,"a+")
-			f.write("\n\n2. Path : "+target+"\n\n")
-			f.close()
-	except Exception:
-		pass
-
-	for t_unit in target_list:
-		final_list.append(t_unit)
-		try:
-			if(l!=""):
-				f=open(l,"a+")
-				if(list(t_unit)[0]=="$" and list(t_unit)[1]=="$"):
-					f.write("File: "+t_unit.replace('$', '', 2)+"\n")
-				elif(list(t_unit)[0]==">" and list(t_unit)[1]==">"):
-					f.write("Directory: "+t_unit.replace('>', '', 2)+"\n")
-				f.close()
-		except Exception:
-			pass
-		if(list(t_unit)[0]=="$" and list(t_unit)[1]=="$"):
-			t_file_count=t_file_count+1;
-		elif(list(t_unit)[0]==">" and list(t_unit)[1]==">"):
-			t_folder_count=t_folder_count+1;
-
-	for fl in final_list:
-		#print(fl)
-		if(list(fl)[0]=="$" and list(fl)[1]=="$"):
-			file_count=file_count+1;
-		elif(list(fl)[0]==">" and list(fl)[1]==">"):
-			folder_count=folder_count+1;
-
-	content_1="Total "+str(folder_count)+" folders and "+str(file_count)+" files are unique."
-	content_2=str(s_folder_count)+" folders and "+str(s_file_count)+" files from path : "+source
-	content_3=str(t_folder_count)+" folders and "+str(t_file_count)+" files from path : "+target
-	try:
-		if(l!=""):
-			f=open(l,"r")
-			data=f.read()
-			f.close()
-			f=open(l,"w+")
-			f.write(content_1+"\n"+content_2+"\n"+content_3+"\n\n"+data)
-			f.close()
-	except Exception:
-		pass
-
-	print("Total "+str(folder_count)+" folders and "+str(file_count)+" files are unique.")
-	print(str(s_folder_count)+" folders and "+str(s_file_count)+" files from path : "+source)
-	print(str(t_folder_count)+" folders and "+str(t_file_count)+" files from path : "+target)
-	source_list=[]
-	target_list=[]
-	final_list=[]
-	folder_count=0
-	file_count=0
-	s_file_count=0
-	s_folder_count=0
-	t_file_count=0
-	t_folder_count=0
+		
+	print(statement_1)
+	print(statement_2)
+	print(statement_3)
 	cmp_state="0"
 
 #8. Delete Folder/ Directory Content Compare Function without log file
@@ -295,7 +189,7 @@ def f_cmp_logless(content):
 			pass
 		# adding exception handling
 		try:
-			directory_content_comparison(source,target, "")
+			compare_s_t(source,target, "")
 			print("Comparison Successfull")
 		except IOError as e:
 			print("Unable to compare. %s" % e)
@@ -321,7 +215,7 @@ def f_cmp_wlog(content):
 			pass
 		# adding exception handling
 		try:
-			directory_content_comparison(source,target,log_file)
+			compare_s_t(source,target,log_file)
 			print("Comparison Successfull")
 		except IOError as e:
 			print("Unable to compare. %s" % e)
